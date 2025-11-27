@@ -12,3 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e30e66ccff195a844bd627e00ea21603, type: 3}
   m_Name: FishScriptableObjectScript
   m_EditorClassIdentifier: Assembly-CSharp::FishScriptableObjectScript
+  maxSpeed: 2.08
+  maxForce: 0.167
+  neighborhoodRadius: 3.63
+  separationRadius: 2.4
+  separationAmount: 3
+  cohesionAmount: 1.16
+  alignmentAmount: 2.18
+  acceleration: {x: 0.22424582, y: 0.4496502}
+  velocity: {x: -0.4061267, y: -1.532528}

@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using NUnit.Framework;
+using UnityEngine;
+using System.Collections.Generic;
+using UnityEngine.Serialization;
 
 public class FishTank : MonoBehaviour
 {
@@ -6,27 +9,41 @@ public class FishTank : MonoBehaviour
     private Vector2 Size = new Vector2(16f, 9f);
 
     [SerializeField]
-    private GameObject fishPrefab = null;
+    [FormerlySerializedAs("FishPrefab")]
+    private GameObject fish = null;
 
-    [Range(0, 300)]
+    //[Range(1, 100)]
     [SerializeField]
     private int SpawningCount;
 
+
     private Fish[] fishes = null;
+    private List<Fish> fishList = new List<Fish>();
 
     private void Start()
     {
         fishes = new Fish[SpawningCount];
         for (int i = 0; i < SpawningCount; i++)
         {
-            GameObject fishInstance = Instantiate(fishPrefab, transform);
-            fishInstance.gameObject.name = $"Fish {System.Guid.NewGuid()}";
-            fishes[i] = fishInstance.GetComponent<Fish>();
+            CreateFish(Vector3.zero);
         }
     }
 
+    private void CreateFish(Vector3 worldposition)
+    {
+        GameObject fishInstance = Instantiate(fish, transform);
+        fishInstance.gameObject.name = $"Fish {System.Guid.NewGuid()}";
+       fishList.Add(fishInstance.GetComponent<Fish>());
+    }
     private void LateUpdate()
     {
+        if (Input.GetMouseButtonDown(0))
+        {
+            Vector3 mousePosition = Input.mousePosition;
+            mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
+            CreateFish(transform.InverseTransformPoint(mousePosition));
+
+        }
         // Loop around out of bound fishes.
         int fishesCount = fishes.Length;
         for (int i = 0; i < fishesCount; i++)
