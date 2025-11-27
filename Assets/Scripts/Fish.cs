@@ -5,40 +5,18 @@ using UnityEngine.Purchasing;
 
 public class Fish : MonoBehaviour
 {
-    [Range(0, 10)]
-    public float maxSpeed = 1f;
-
-    [Range(.1f, .5f)]
-    public float maxForce = .03f;
-
-    [Range(1, 10)]
-    public float neighborhoodRadius = 3f;
-
-    [Range(0.1f, 10f)]
-    public float separationRadius = 1f;
-
-    [Range(0, 3)]
-    public float separationAmount = 1f;
-
-    [Range(0, 3)]
-    public float cohesionAmount = 1f;
-
-    [Range(0, 3)]
-    public float alignmentAmount = 1f;
-
-    public Vector2 acceleration;
-    public Vector2 velocity;
+    public FishScriptableObjectScript FishScriptable;
 
     private void Start()
     {
         float angle = Random.Range(0, 2 * Mathf.PI);
         transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
-        velocity = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+        FishScriptable.velocity = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
     }
 
     private void Update()
     {
-        var boidColliders = Physics2D.OverlapCircleAll(transform.position, neighborhoodRadius);
+        var boidColliders = Physics2D.OverlapCircleAll(transform.position, FishScriptable.neighborhoodRadius);
         var boids = boidColliders.Select(boidCollider => boidCollider.GetComponent<Fish>()).ToList();
         boids.Remove(this);
 
@@ -54,23 +32,23 @@ public class Fish : MonoBehaviour
         var separation = Separation(boids);
         var cohesion = Cohesion(boids);
 
-        acceleration = alignmentAmount * alignment + cohesionAmount * cohesion + separationAmount * separation;
+        FishScriptable.acceleration = FishScriptable.alignmentAmount * alignment + FishScriptable.cohesionAmount * cohesion + FishScriptable.separationAmount * separation;
     }
 
     public void UpdateVelocity()
     {
-        velocity += acceleration;
-        velocity = LimitMagnitude(velocity, maxSpeed);
+        FishScriptable.velocity += FishScriptable.acceleration;
+        FishScriptable.velocity = LimitMagnitude(FishScriptable.velocity, FishScriptable.maxSpeed);
     }
 
     private void UpdatePosition()
     {
-        transform.Translate(velocity * Time.deltaTime, Space.World);
+        transform.Translate(FishScriptable.velocity * Time.deltaTime, Space.World);
     }
 
     private void UpdateRotation()
     {
-        var angle = Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg;
+        var angle = Mathf.Atan2(FishScriptable.velocity.y, FishScriptable.velocity.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
     }
 
@@ -81,11 +59,11 @@ public class Fish : MonoBehaviour
 
         foreach (var boid in boids)
         {
-            velocity += boid.velocity;
+            velocity += boid.FishScriptable.velocity;
         }
 
         velocity /= boids.Count();
-        var steer = Steer(velocity.normalized * maxSpeed);
+        var steer = Steer(velocity.normalized * FishScriptable.maxSpeed);
         return steer;
     }
 
@@ -101,14 +79,14 @@ public class Fish : MonoBehaviour
 
         var average = sumPositions / boids.Count();
         var direction = average - (Vector2)transform.position;
-        var steer = Steer(direction.normalized * maxSpeed);
+        var steer = Steer(direction.normalized * FishScriptable.maxSpeed);
         return steer;
     }
 
     private Vector2 Separation(IEnumerable<Fish> boids)
     {
         var direction = Vector2.zero;
-        boids = boids.Where(boid => Vector2.Distance(transform.position, boid.transform.position) <= separationRadius);
+        boids = boids.Where(boid => Vector2.Distance(transform.position, boid.transform.position) <= FishScriptable.separationRadius);
         if (!boids.Any()) return direction;
 
         foreach (var boid in boids)
@@ -118,14 +96,14 @@ public class Fish : MonoBehaviour
         }
 
         direction /= boids.Count();
-        var steer = Steer(direction.normalized * maxSpeed);
+        var steer = Steer(direction.normalized * FishScriptable.maxSpeed);
         return steer;
     }
 
     private Vector2 Steer(Vector2 desired)
     {
-        var steer = desired - velocity;
-        steer = LimitMagnitude(steer, maxForce);
+        var steer = desired - FishScriptable.velocity;
+        steer = LimitMagnitude(steer, FishScriptable.maxForce);
         return steer;
     }
 
@@ -143,10 +121,10 @@ public class Fish : MonoBehaviour
     {
         // Neighborhood radius.
         Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, neighborhoodRadius);
+        Gizmos.DrawWireSphere(transform.position, FishScriptable.neighborhoodRadius);
 
         // Separation radius.
         Gizmos.color = Color.salmon;
-        Gizmos.DrawWireSphere(transform.position, separationRadius);
+        Gizmos.DrawWireSphere(transform.position, FishScriptable.separationRadius);
     }
 }

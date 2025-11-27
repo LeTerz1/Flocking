@@ -46,14 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbd3e66d8d5be4a4aa0d7a875875d56b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSpeed: 3
-  maxForce: 0.1
-  neighborhoodRadius: 3
-  separationAmount: 1.2
-  cohesionAmount: 1
-  alignmentAmount: 1
-  acceleration: {x: 0, y: 0}
-  velocity: {x: 0, y: 0}
+  FishScriptable: {fileID: 11400000, guid: 38d66ebef18db94479209f541a82bcb5, type: 2}
 --- !u!212 &212898628359471008
 SpriteRenderer:
   m_ObjectHideFlags: 0
